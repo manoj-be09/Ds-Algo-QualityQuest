@@ -1,5 +1,8 @@
 package stepDefinitions;
+import pages.HomePage;
 import pages.LoginPage;
+import utilities.ExcelReader;
+import java.io.IOException;
 import org.openqa.selenium.WebDriver;
 
 import driver.Driverfactory;
@@ -8,95 +11,98 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 
-public class loginPageStepDef {
+public class loginPageStepDef{
 	private WebDriver driver;
-	private LoginPage loginPage= new LoginPage(Driverfactory.getDriver());
+	private HomePage homePage= new HomePage(Driverfactory.getDriver());
+	private LoginPage loginPage=homePage.loginPageOpening();
+	
+	ExcelReader excelReader = new ExcelReader();
+	String username = "";
+    String password = "";
     
-	
-	@Given("The user is in the Sign in page")
-	public void the_user_is_in_the_sign_in_page() {
-		loginPage.openLoginpage();
-	}
+    @Given("The user is in the Sign in page")
+    public void the_user_is_in_the_sign_in_page() {
+    	loginPage.verifyLoginPage();
+    }
 
-	@When("The user enters a valid {string}")
-	public void the_user_enters_a_valid(String string) {
-		loginPage.enterLoginUsername();
+    @When("The user enters a valid {string} and valid {string}")
+    public void the_user_enters_a_valid_and_valid(String string, String string2) throws IOException {
+    	 username = ExcelReader.getDataFromExcel("LoginData",1,0);
+    	 password = ExcelReader.getDataFromExcel("LoginData",1,1);
+    	 loginPage.enterLoginUsername(username);
+    	 loginPage.enterLoginPassword(password);
+    }
 
-	}
+    @When("Clicks login button")
+    public void clicks_login_button() {
+    	loginPage.clickLoginBtn();
+    }
 
-	@When("Clicks login button")
-	public void clicks_login_button() {
-		loginPage.clickLoginBtn();
-	}
+   
 
-	@Then("User homepage is displayed")
-	public void user_homepage_is_displayed() {
-		loginPage.verifyHomePage();
-	}
+    @When("The user enters a invalid {string} and valid {string}")
+    public void the_user_enters_a_invalid_and_valid(String string, String string2) throws IOException {
+    username = ExcelReader.getDataFromExcel("LoginData",1,2);
+   	 password = ExcelReader.getDataFromExcel("LoginData",1,1);
+   	 loginPage.enterLoginUsername(username);
+   	 loginPage.enterLoginPassword(password);
+    }
+    
+    
+    @When("User enters valid {string} in username field")
+    public void user_enters_valid_in_username_field(String string) throws IOException {
+    	 username = ExcelReader.getDataFromExcel("LoginData",1,0); 	 
+    	 loginPage.enterLoginUsername(username);
+    	
+    }
 
-	@When("The user clicks on the register link on the signin page")
-	public void the_user_clicks_on_the_register_link_on_the_signin_page() {
-		loginPage.clickRegisterLink();
-	}
+    @When("User enters valid {string} in password field")
+    public void user_enters_valid_in_password_field(String string) throws IOException {
+    	password = ExcelReader.getDataFromExcel("LoginData",1,1);
+    	 loginPage.enterLoginPassword(password);
+    }
 
-	@Then("The user is redirected to the Registration page from the signin page")
-	public void the_user_is_redirected_to_the_registration_page_from_the_signin_page() {
-		loginPage.verifyRegisterPage();
-	}
+    @Then("Error message is displayed: Please check your user id")
+    public void error_message_is_displayed_please_check_your_user_id() {
+        
+    }
 
-	@Given("The user is in the signin page")
-	public void the_user_is_in_the_signin_page() {
-		loginPage.openLoginpage();
-	}
+    @When("The user enters a valid {string} and invalid {string}")
+    public void the_user_enters_a_valid_and_invalid(String string, String string2) throws IOException {
+    	username = ExcelReader.getDataFromExcel("LoginData",1,0);
+      	 password = ExcelReader.getDataFromExcel("LoginData",1,3);
+      	 loginPage.enterLoginUsername(username);
+      	 loginPage.enterLoginPassword(password);
+    }
 
-	@When("The user enters a valid'password'")
-	public void the_user_enters_a_valid_password() {
-		loginPage.enterLoginPassword();
-	}
+    @Then("Error message is displayed: Please check your password")
+    public void error_message_is_displayed_please_check_your_password() {
+    	loginPage.LoginErrMsgPassword();
+    }
+
+    @Then("Username field validation Error message is displayed: Please fill out this field")
+    public void username_field_validation_error_message_is_displayed_please_fill_out_this_field() {
+    	loginPage.usernameFieldValidationMsg();
+    }
 
 
-	@Then("Error message is displayed System should alert user Please check your user id")
-	public void error_message_is_displayed_system_should_alert_user_please_check_your_user_id() {
-	    
-	}
+    @Then("Password field validation Error message is displayed: Please fill out this field")
+    public void password_field_validation_error_message_is_displayed_please_fill_out_this_field() {
+    	loginPage.passwordFieldValidationMsg();
+    }
 
-	@Given("The user is on the Home page with valid log in")
-	public void the_user_is_on_the_home_page_with_valid_log_in() {
-		loginPage.openLoginpage();
-		loginPage.clickSigninLink();
-		loginPage.enterLoginUsername();
-		loginPage.enterLoginPassword();
-		loginPage.clickLoginBtn();
-	}
+   
 
-	@When("The user clicks on Sign out")
-	public void the_user_clicks_on_sign_out() {
-		loginPage.clickSignoutLink();
-	}
+    @Then("The user is redirected to the Login page from the Home page")
+    public void the_user_is_redirected_to_the_login_page_from_the_home_page() {
+    	loginPage.verifyLoginPage();
+    }
 
-	@Then("The user is redirected to the login page from the homepage")
-	public void the_user_is_redirected_to_the_login_page_from_the_homepage() {
-		loginPage.verifySignoutPage();
-	}
-	@When("The user enters a invalid {string}")
-	public void the_user_enters_a_invalid(String string) {
-		
-	}
-	
-	@When("The user clicks on the sigin link on the signin page")
-	public void the_user_clicks_on_the_sigin_link_on_the_signin_page() {
-		loginPage.openLoginpage();
-		loginPage.clickSigninLink();
-	}
+    
+    @When("The user clicks on each Get Started button on the page")
+    public void the_user_clicks_on_each_get_started_button_on_the_page() {
+    	
+    }
 
-	@Then("The user is redirected to the Login page from the signin page")
-	public void the_user_is_redirected_to_the_login_page_from_the_signin_page() {
-		loginPage.verifyLoginPage();
-	}
-
-	@When("Clicks sigin link")
-	public void clicks_sigin_link() {
-		loginPage.clickSigninLink();
-	}
 
 }

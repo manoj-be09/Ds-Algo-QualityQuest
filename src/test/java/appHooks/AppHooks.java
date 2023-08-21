@@ -34,7 +34,9 @@ public void launchBrowser() {
 
 @After(order=0)
 public void quitBrowser() {
-	driver.quit();
+	if (driver != null) {
+        driver.quit();
+    }
 }
 
 }

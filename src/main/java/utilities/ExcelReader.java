@@ -1,29 +1,36 @@
 package utilities;
 
 import java.io.FileInputStream;
-import java.util.Iterator;
-
+import java.io.IOException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-
-import com.google.common.collect.Table.Cell;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelReader {
-	
-	FileInputStream file = new FileInputStream("src/test/resources/excelTestData/DsAlgoTestData.xlsx");
-    Workbook workbook = new XSSFWorkbook(file);
-    Sheet sheet = workbook.getSheet(sheetName);
 
-    Iterator<Row> rowIterator = sheet.iterator();
-    while (rowIterator.hasNext()) {
-        Row row = rowIterator.next();
-        Cell cell = row.getCell(0); // Assuming you want to read data from the first cell (column) in each row
-        if (cell != null) {
-            String cellValue = cell.getStringCellValue();
-            System.out.println("Data from Excel: " + cellValue);
+	 public static String getDataFromExcel(String sheetName, int rowNumber, int columnNumber) throws IOException {
+	        FileInputStream fis = new FileInputStream("src/test/resources/excelTestData/DsAlgoTestData.xlsx");
+	        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+	        XSSFSheet sheet = workbook.getSheet(sheetName);
 
-            // Now you can use the cellValue in your Selenium automation
-            // For example, input it into a text field using Selenium WebDriver:
-            // driver.findElement(By.id("yourTextFieldId")).sendKeys(cellValue);
-        }
-    }
+	        Row row = sheet.getRow(rowNumber);
+	        Cell cell = row.getCell(columnNumber);
+
+	        String cellValue = "";
+	        if (cell != null) {
+	            if (cell.getCellType() == CellType.STRING) {
+	                cellValue = cell.getStringCellValue();
+	            } else if (cell.getCellType() == CellType.NUMERIC) {
+	                cellValue = String.valueOf(cell.getNumericCellValue());
+	            }
+	        }
+
+	        workbook.close();
+	        fis.close();
+
+	        return cellValue;
+	    }
+
 }
